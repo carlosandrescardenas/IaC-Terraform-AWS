@@ -1,6 +1,6 @@
 #Security Group Back
-resource "aws_security_group" "securitygroup-api-carloscardenas-ec2" {
-  name        = "securitygroup-api-carloscardenas-ec2"
+resource "aws_security_group" "securitygroup_api_carloscardenas_ec2" {
+  name        = "securitygroup_api_carloscardenas_ec2"
   description = "Allow traffic for API side"
   vpc_id      = var.aws_vpc_id
   ingress {
@@ -23,14 +23,14 @@ resource "aws_security_group" "securitygroup-api-carloscardenas-ec2" {
 }
 
 #Launch Template
-resource "aws_launch_template" "LT-backend-ccardenas" {
-  name = "LT-backend-ccardenas"
+resource "aws_launch_template" "LT_backend_ccardenas" {
+  name = "LT_backend_ccardenas"
 
   image_id      = "ami-083f68207d3376798"
   instance_type = "t1.micro"
   key_name      = "carloscardenas-ec2-api"
 
-  vpc_security_group_ids = [aws_security_group.securitygroup-api-carloscardenas-ec2.id]
+  vpc_security_group_ids = [aws_security_group.securitygroup_api_carloscardenas_ec2.id]
 
   tag_specifications {
     resource_type = "instance"
@@ -50,22 +50,15 @@ resource "aws_launch_template" "LT-backend-ccardenas" {
     }
   }
 
-  user_data = base64encode("${data.template_file.userdata_back.rendered}") 
-}
-
-data "template_file" "userdata_back" {
-  template = file("${path.module}/launchconfigurations/back.sh")
-  vars = {
-    endpoint = "${aws_db_instance.moviedb_ccardenas.endpoint}"
-  }
+  user_data = base64encode(templatefile("${path.module}/launchconfigurations/back.sh", {endpoint = aws_db_instance.moviedb_ccardenas.address})) 
 }
 
 #load Balancer API - Internet
-resource "aws_lb" "lb-backend-carloscardenas" {
-  name               = "lb-backend-carloscardenas"
-  internal           = false
+resource "aws_lb" "lb_backend_carloscardenas" {
+  name               = "lbbackendcarloscardenas"
+  internal           = true
   load_balancer_type = "application"
-  security_groups    = [aws_security_group.securitygroup-api-carloscardenas-ec2.id]
+  security_groups    = [aws_security_group.securitygroup_api_carloscardenas_ec2.id]
   subnets            = [data.aws_subnet.ramp_up_training-private-0.id, data.aws_subnet.ramp_up_training-private-1.id]
 
   enable_deletion_protection = false
@@ -89,8 +82,8 @@ resource "aws_lb_target_group" "targetgroupBackendCarlosCardenas" {
 }
 
 #Load Balancer Listener API
-resource "aws_lb_listener" "lbl-backend-carloscardenas" {
-  load_balancer_arn = aws_lb.lb-backend-carloscardenas.arn
+resource "aws_lb_listener" "lbl_backend_carloscardenas" {
+  load_balancer_arn = aws_lb.lb_backend_carloscardenas.arn
   port              = var.port_back
   protocol          = "HTTP"
 
@@ -102,19 +95,19 @@ resource "aws_lb_listener" "lbl-backend-carloscardenas" {
 
 # Create a new ALB Target Group attachment
 resource "aws_autoscaling_attachment" "asg_attachment_api_ccardenas" {
-  autoscaling_group_name = aws_autoscaling_group.ag-backend-carloscardenas.id
+  autoscaling_group_name = aws_autoscaling_group.ag_backend_carloscardenas.id
   alb_target_group_arn   = aws_lb_target_group.targetgroupBackendCarlosCardenas.arn
 }
 
 #AutoScaling group
-resource "aws_autoscaling_group" "ag-backend-carloscardenas" {
+resource "aws_autoscaling_group" "ag_backend_carloscardenas" {
   vpc_zone_identifier = [data.aws_subnet.ramp_up_training-private-0.id, data.aws_subnet.ramp_up_training-private-1.id]
   desired_capacity    = var.desired_capacity
   max_size            = var.max_size
   min_size            = var.min_size
 
   launch_template {
-    id      = aws_launch_template.LT-backend-ccardenas.id
+    id      = aws_launch_template.LT_backend_ccardenas.id
     version = "$Latest"
   }
 

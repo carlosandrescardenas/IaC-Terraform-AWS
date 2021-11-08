@@ -10,4 +10,5 @@ apt install nodejs -y
 git clone https://github.com/carlosandrescardenas/movie-analyst-ui.git
 cd /movie-analyst-ui/
 npm install
+echo export BACK_HOST=${dns} | sudo tee -a /etc/environment
 node server.js
