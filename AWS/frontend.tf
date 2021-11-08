@@ -85,13 +85,19 @@ resource "aws_lb_target_group" "tgroup-ccardenas-ui-internet" {
 #Load Balancer Listener UI
 resource "aws_lb_listener" "lbl-frontend-carloscardenas" {
   load_balancer_arn = aws_lb.lb-frontend-carloscardenas-inter.arn
-  port              = var.port_ui_listener
+  port              = var.port_ui
   protocol          = "HTTP"
 
   default_action {
     type             = "forward"
     target_group_arn = aws_lb_target_group.tgroup-ccardenas-ui-internet.arn
   }
+}
+
+# Create a new ALB Target Group attachment
+resource "aws_autoscaling_attachment" "asg_attachment_ui_ccardenas" {
+  autoscaling_group_name = aws_autoscaling_group.ag-frontend-carloscardenas.id
+  alb_target_group_arn   = aws_lb_target_group.tgroup-ccardenas-ui-internet.arn
 }
 
 #AutoScaling group
@@ -113,10 +119,3 @@ resource "aws_autoscaling_group" "ag-frontend-carloscardenas" {
       responsible = var.tags.responsible
   }]
 }
-
-# Load balancer attachment to ASG
-# resource "aws_autoscaling_attachment" "asg_attachment_carloscardenas_ui" {
-#   autoscaling_group_name = aws_autoscaling_group.ag-frontend-carloscardenas.id
-#   elb                    = aws_lb.lb-frontend-carloscardenas-inter.id
-# }
-

@@ -75,9 +75,3 @@ variable "port_back" {
   description = "port_back"
   default     = 8085
 }
-
-variable "port_ui_listener" {
-  type        = number
-  description = "port_ui_listener"
-  default     = 80
-}

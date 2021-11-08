@@ -50,7 +50,14 @@ resource "aws_launch_template" "LT-backend-ccardenas" {
     }
   }
 
-  user_data = filebase64("${path.module}/launchconfigurations/back.sh")
+   user_data = data.template_file.userdata_back.rendered
+}
+
+data "template_file" "userdata_back"{
+  template = file("${path.module}/launchconfigurations/back.sh")
+  vars = {
+    endpoint = aws_db_instance.moviedb_ccardenas.endpoint
+  }
 }
 
 #load Balancer API - Internet
@@ -93,6 +100,12 @@ resource "aws_lb_listener" "lbl-backend-carloscardenas" {
   }
 }
 
+# Create a new ALB Target Group attachment
+resource "aws_autoscaling_attachment" "asg_attachment_api_ccardenas" {
+  autoscaling_group_name = aws_autoscaling_group.ag-backend-carloscardenas.id
+  alb_target_group_arn   = aws_lb_target_group.targetgroupBackendCarlosCardenas.arn
+}
+
 #AutoScaling group
 resource "aws_autoscaling_group" "ag-backend-carloscardenas" {
   vpc_zone_identifier = [data.aws_subnet.ramp_up_training-private-0.id, data.aws_subnet.ramp_up_training-private-1.id]
@@ -112,11 +125,4 @@ resource "aws_autoscaling_group" "ag-backend-carloscardenas" {
       responsible = var.tags.responsible
   }]
 }
-
-# Load balancer attachment to ASG
-# resource "aws_autoscaling_attachment" "asg_attachment_ccardenas_api" {
-#   autoscaling_group_name = aws_autoscaling_group.ag-backend-carloscardenas.id
-#   elb                    = aws_lb.lb-backend-carloscardenas.id
-# }
-
 
