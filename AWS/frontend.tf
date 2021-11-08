@@ -115,8 +115,8 @@ resource "aws_autoscaling_group" "ag-frontend-carloscardenas" {
 }
 
 # Load balancer attachment to ASG
-resource "aws_autoscaling_attachment" "asg_attachment_carloscardenas_ui" {
-  autoscaling_group_name = aws_autoscaling_group.ag-frontend-carloscardenas.id
-  elb                    = aws_lb.lb-frontend-carloscardenas-inter.id
-}
+# resource "aws_autoscaling_attachment" "asg_attachment_carloscardenas_ui" {
+#   autoscaling_group_name = aws_autoscaling_group.ag-frontend-carloscardenas.id
+#   elb                    = aws_lb.lb-frontend-carloscardenas-inter.id
+# }
 

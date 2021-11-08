@@ -1,4 +1,4 @@
-resource "aws_db_instance" "moviedb" {
+resource "aws_db_instance" "moviedb_ccardenas" {
   allocated_storage   = 10
   engine              = "mysql"
   engine_version      = "8.0.23"
