@@ -18,4 +18,5 @@ echo export DB_HOST=${endpoint} | sudo tee -a /etc/environment
 echo export DB_USER=admin | sudo tee -a /etc/environment
 echo export DB_PASS=rampuptest2021 | sudo tee -a /etc/environment
 echo export DB_NAME=movie_db | sudo tee -a /etc/environment
+cd /movie-analyst-api/
 node server.js
