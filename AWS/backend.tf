@@ -50,10 +50,10 @@ resource "aws_launch_template" "LT-backend-ccardenas" {
     }
   }
 
-   user_data = data.template_file.userdata_back.rendered
+  user_data = base64encode(data.template_file.userdata_back.rendered)
 }
 
-data "template_file" "userdata_back"{
+data "template_file" "userdata_back" {
   template = file("${path.module}/launchconfigurations/back.sh")
   vars = {
     endpoint = aws_db_instance.moviedb_ccardenas.endpoint
