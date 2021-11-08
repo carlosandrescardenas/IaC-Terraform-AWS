@@ -14,4 +14,3 @@ mysql -h $endpoint -u admin -prampuptest2021  < db_creation.sql
 mysql -h $endpoint -u admin -prampuptest2021 movie_db < table_creation_and_inserts.sql
 cd ..
 npm install
-node server.js
