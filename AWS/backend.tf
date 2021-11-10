@@ -50,7 +50,7 @@ resource "aws_launch_template" "LT_backend_ccardenas" {
     }
   }
 
-  user_data = base64encode(templatefile("${path.module}/launchconfigurations/back.sh", {endpoint = aws_db_instance.moviedb_ccardenas.address})) 
+  user_data = base64encode(templatefile("${path.module}/launchconfigurations/bash_ansible.sh", {endpoint = aws_db_instance.moviedb_ccardenas.address})) 
 }
 
 #load Balancer API - Internet

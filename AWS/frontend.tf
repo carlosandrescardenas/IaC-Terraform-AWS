@@ -51,7 +51,7 @@ resource "aws_launch_template" "LT_frontend_ccardenas" {
     }
   }
 
-  user_data = base64encode(templatefile("${path.module}/launchconfigurations/front.sh", {dns = aws_lb.lb_backend_carloscardenas.dns_name})) 
+  user_data = base64encode(templatefile("${path.module}/launchconfigurations/bash_ansible.sh", {dns = aws_lb.lb_backend_carloscardenas.dns_name})) 
 }
 
 #load Balancer UI - Internet
