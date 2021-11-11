@@ -2,8 +2,8 @@
 
 apt update
 apt upgrade
-add-apt-repository ppa:ansible/ansible
-apt update
+apt install software-properties-common
+add-apt-repository --yes --update ppa:ansible/ansible
 apt install ansible -y
 git clone https://github.com/carlosandrescardenas/ansible-configuration.git
-cd /ansible-configuration/
+cd /ansible-configuration/playbooks
